@@ -42,5 +42,6 @@ struct MainTabView: View {
                 .tag(TabItem.profile)
         }
         .accentColor(.blue) // Customize the selected tab color
+        
     }
 }

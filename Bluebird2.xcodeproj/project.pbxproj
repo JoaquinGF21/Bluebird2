@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D20FFB2B2E8B0711008D06D1 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = D20FFB2A2E8B0711008D06D1 /* FirebaseDatabase */; };
 		D2B6C91E2E722756007A31CF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D2B6C91D2E722756007A31CF /* FirebaseAnalytics */; };
 		D2B6C9202E722756007A31CF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D2B6C91F2E722756007A31CF /* FirebaseAuth */; };
 		D2B6C9222E722756007A31CF /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = D2B6C9212E722756007A31CF /* FirebaseCore */; };
@@ -37,9 +38,33 @@
 		D2FB016B2E6E450400098D72 /* Bluebird2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Bluebird2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D22CF8502E8B2186005182FE /* Exceptions for "Bluebird2" folder in "Bluebird2" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Features/Explore/Views/Map/.swift,
+			);
+			target = D2FB01522E6E450300098D72 /* Bluebird2 */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		D22CF8512E8B2186005182FE /* Exceptions for "Bluebird2" folder in "Compile Sources" phase from "Bluebird2" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = D2FB014F2E6E450300098D72 /* Sources */;
+			membershipExceptions = (
+				Features/Explore/Views/Map/.swift,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D2FB01552E6E450300098D72 /* Bluebird2 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D22CF8502E8B2186005182FE /* Exceptions for "Bluebird2" folder in "Bluebird2" target */,
+				D22CF8512E8B2186005182FE /* Exceptions for "Bluebird2" folder in "Compile Sources" phase from "Bluebird2" target */,
+			);
 			path = Bluebird2;
 			sourceTree = "<group>";
 		};
@@ -60,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D20FFB2B2E8B0711008D06D1 /* FirebaseDatabase in Frameworks */,
 				D2B6C91E2E722756007A31CF /* FirebaseAnalytics in Frameworks */,
 				D2B6C9242E722756007A31CF /* FirebaseFirestore in Frameworks */,
 				D2B6C9222E722756007A31CF /* FirebaseCore in Frameworks */,
@@ -130,6 +156,7 @@
 				D2B6C9212E722756007A31CF /* FirebaseCore */,
 				D2B6C9232E722756007A31CF /* FirebaseFirestore */,
 				D2B6C9252E722756007A31CF /* FirebaseStorage */,
+				D20FFB2A2E8B0711008D06D1 /* FirebaseDatabase */,
 			);
 			productName = Bluebird;
 			productReference = D2FB01532E6E450300098D72 /* Bluebird2.app */;
@@ -624,6 +651,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D20FFB2A2E8B0711008D06D1 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D2B6C91C2E72264B007A31CF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
 		D2B6C91D2E722756007A31CF /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D2B6C91C2E72264B007A31CF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

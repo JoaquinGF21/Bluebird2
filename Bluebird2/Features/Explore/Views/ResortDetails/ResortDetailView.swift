@@ -1,12 +1,11 @@
 // Features/Explore/Views/ResortDetails/ResortDetailView.swift
-// MAIN CONTAINER - Simplified to orchestrate subviews
-
 import SwiftUI
 import MapKit
 
 struct ResortDetailView: View {
     let resort: Resort
-    @Binding var isPresented: Bool
+    let onPlanTrip: (Resort) -> Void  // Add this parameter
+    @Environment(\.dismiss) var dismiss  // Use environment dismiss instead of binding
     @State private var selectedTab = 0
     
     var body: some View {
@@ -31,7 +30,7 @@ struct ResortDetailView: View {
                     .pickerStyle(SegmentedPickerStyle())
                     .padding()
                     
-                    // Tab Content - Each is its own component
+                    // Tab Content
                     VStack(alignment: .leading, spacing: 16) {
                         switch selectedTab {
                         case 0:
@@ -48,18 +47,30 @@ struct ResortDetailView: View {
                     }
                     .padding(.horizontal)
                     
-                    // Action Buttons Component
-                    ResortActionButtons(
-                        resort: resort,
-                        isPresented: $isPresented
-                    )
+                    // Plan Trip Button
+                    Button(action: {
+                        onPlanTrip(resort)  // Call the closure
+                        dismiss()  // Dismiss the sheet
+                    }) {
+                        Text("Plan Trip Here")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                    }
+                    .padding()
+                    
+                    // Keep your other action buttons if needed
+                    // ResortActionButtons(resort: resort, isPresented: $isPresented)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
-                        isPresented = false
+                        dismiss()
                     }
                 }
             }
