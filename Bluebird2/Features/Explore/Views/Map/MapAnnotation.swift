@@ -38,17 +38,17 @@ struct ResortAnnotation: View {
     }
 }
 
-// For more advanced annotation with MKAnnotationView (if needed)
-class ResortAnnotationView: MKAnnotationView {
-    override var annotation: MKAnnotation? {
-        didSet {
-            guard annotation is MKPointAnnotation else { return }
-            
-            canShowCallout = true
-            calloutOffset = CGPoint(x: -5, y: 5)
-            rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
-            
-            image = UIImage(systemName: "snowflake.circle.fill")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)
-        }
-    }
-}
+//// For more advanced annotation with MKAnnotationView (if needed)
+//class ResortAnnotationView: MKAnnotationView {
+//    override var annotation: MKAnnotation? {
+//        didSet {
+//            guard annotation is MKPointAnnotation else { return }
+//            
+//            canShowCallout = true
+//            calloutOffset = CGPoint(x: -5, y: 5)
+//            rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+//            
+//            image = UIImage(systemName: "snowflake.circle.fill")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)
+//        }
+//    }
+//}

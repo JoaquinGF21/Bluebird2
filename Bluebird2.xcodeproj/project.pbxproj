@@ -38,33 +38,9 @@
 		D2FB016B2E6E450400098D72 /* Bluebird2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Bluebird2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		D22CF8502E8B2186005182FE /* Exceptions for "Bluebird2" folder in "Bluebird2" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Features/Explore/Views/Map/.swift,
-			);
-			target = D2FB01522E6E450300098D72 /* Bluebird2 */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		D22CF8512E8B2186005182FE /* Exceptions for "Bluebird2" folder in "Compile Sources" phase from "Bluebird2" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = D2FB014F2E6E450300098D72 /* Sources */;
-			membershipExceptions = (
-				Features/Explore/Views/Map/.swift,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D2FB01552E6E450300098D72 /* Bluebird2 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				D22CF8502E8B2186005182FE /* Exceptions for "Bluebird2" folder in "Bluebird2" target */,
-				D22CF8512E8B2186005182FE /* Exceptions for "Bluebird2" folder in "Compile Sources" phase from "Bluebird2" target */,
-			);
 			path = Bluebird2;
 			sourceTree = "<group>";
 		};

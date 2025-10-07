@@ -9,7 +9,7 @@
 import Foundation
 import CoreLocation
 
-struct Resort: Identifiable, Codable {
+struct Resort: Identifiable, Codable, Equatable {
     // Common identifiers
     let id: String
     let name: String
@@ -95,12 +95,12 @@ struct Resort: Identifiable, Codable {
 }
 
 // MARK: - Supporting Types
-struct DifficultyInfo: Codable {
+struct DifficultyInfo: Codable, Equatable {
     let percent: DifficultyPercent
     let distance: DifficultyDistance
 }
 
-struct DifficultyPercent: Codable {
+struct DifficultyPercent: Codable, Equatable{
     let green: String
     let blue: String
     let doubleBlue: String
@@ -108,7 +108,7 @@ struct DifficultyPercent: Codable {
     let doubleBlack: String
 }
 
-struct DifficultyDistance: Codable {
+struct DifficultyDistance: Codable, Equatable {
     let green: String
     let blue: String
     let doubleBlue: String
@@ -116,7 +116,7 @@ struct DifficultyDistance: Codable {
     let doubleBlack: String
 }
 
-struct WeatherInfo: Codable {
+struct WeatherInfo: Codable, Equatable {
     let temperature: Double
     let condition: String
     let snowfall: Double

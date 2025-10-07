@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PlanView: View {
+    @EnvironmentObject var coordinator: AppCoordinator
+    @EnvironmentObject var authService: AuthService
     @StateObject private var viewModel = PlanViewModel()
     @State private var showingTripBuilder = false
     
@@ -32,6 +34,23 @@ struct PlanView: View {
                         if let resort = viewModel.selectedResort {
                             SelectedResortCard(resort: resort)
                                 .padding(.horizontal)
+                            
+                            // Plan Trip Button
+                            Button(action: {
+                                showingTripBuilder = true
+                            }) {
+                                HStack {
+                                    Image(systemName: "map.fill")
+                                    Text("Plan Trip Here")
+                                        .fontWeight(.semibold)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                            }
+                            .padding(.horizontal)
                         } else {
                             NoResortSelectedView(action: viewModel.startNewTrip)
                                 .padding(.horizontal)
@@ -47,6 +66,12 @@ struct PlanView: View {
                             if viewModel.savedTrips.isEmpty {
                                 EmptyTripsView()
                                     .padding(.horizontal)
+                            } else {
+                                // Display saved trips
+                                ForEach(viewModel.savedTrips) { trip in
+                                    TripCardView(trip: trip)
+                                        .padding(.horizontal)
+                                }
                             }
                         }
                         .padding(.vertical)
@@ -56,16 +81,63 @@ struct PlanView: View {
             .navigationTitle("Plan")
             .sheet(isPresented: $showingTripBuilder) {
                 if let resort = viewModel.selectedResort {
-                    NavigationView {
-                        TripBuilderView(resort: resort)
-                    }
+                    TripPlanner(resort: resort)
+                        .environmentObject(authService)
+                }
+            }
+            // ADD THIS: Auto-open trip planner when resort is selected
+            .onChange(of: viewModel.selectedResort) { newResort in
+                if newResort != nil {
+                    showingTripBuilder = true
                 }
             }
         }
     }
 }
+
+// MARK: - Simple Trip Card for Display
+struct TripCardView: View {
+    let trip: Trip
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(trip.resortName)
+                        .font(.headline)
+                    
+                    Text(trip.formattedDates)
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text(trip.formattedCost)
+                        .font(.headline)
+                        .foregroundColor(.blue)
+                    
+                    HStack(spacing: 4) {
+                        Image(systemName: trip.status.icon)
+                            .font(.caption)
+                        Text(trip.status.displayName)
+                            .font(.caption)
+                    }
+                    .foregroundColor(trip.status.color)
+                }
+            }
+            .padding()
+            .background(Color.white)
+            .cornerRadius(12)
+            .shadow(color: .black.opacity(0.1), radius: 4)
+        }
+    }
+}
+
 struct PlanView_Previews: PreviewProvider {
     static var previews: some View {
         PlanView()
+            .environmentObject(AuthService())
     }
 }

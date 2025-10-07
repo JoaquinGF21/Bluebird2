@@ -8,135 +8,94 @@ struct SkiMapView: View {
     @Binding var selectedResort: Resort?
     
     @StateObject private var clusterManager = MapClusterManager()
-    @State private var lastRegion: MKCoordinateRegion?
+    @State private var mapCameraPosition: MapCameraPosition
+    @State private var hasInitialized = false
+    
+    init(resorts: [Resort], region: Binding<MKCoordinateRegion>, selectedResort: Binding<Resort?>) {
+        self.resorts = resorts
+        self._region = region
+        self._selectedResort = selectedResort
+        
+        // Initialize with Northeast view (Vermont area)
+        let initialRegion = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 44.0, longitude: -72.7),
+            span: MKCoordinateSpan(latitudeDelta: 6.0, longitudeDelta: 6.0)
+        )
+        self._mapCameraPosition = State(initialValue: .region(initialRegion))
+        // REMOVED: self._region.wrappedValue = initialRegion
+    }
     
     var body: some View {
-        Map(coordinateRegion: $region,
-            showsUserLocation: true,
-            annotationItems: clusterManager.annotations) { item in
-            MapAnnotation(coordinate: item.coordinate) {
-                switch item {
-                case .resort(let resort):
-                    ResortMapMarker(
-                        resort: resort,
-                        showLabel: clusterManager.shouldShowLabels(for: region.span)
-                    )
-                    .onTapGesture {
-                        selectedResort = resort
-                    }
-                case .cluster(let cluster):
-                    ClusterAnnotationView(cluster: cluster)
-                        .onTapGesture {
-                            zoomToCluster(cluster)
-                        }
+        Map(position: $mapCameraPosition) {
+            ForEach(clusterManager.annotations) { annotation in
+                Annotation("", coordinate: annotation.coordinate) {
+                    annotationView(for: annotation)
                 }
             }
         }
-        .edgesIgnoringSafeArea(.all)
+        .mapStyle(.standard(elevation: .realistic))
+        .mapControls {
+            MapUserLocationButton()
+            MapCompass()
+            MapScaleView()
+        }
         .onAppear {
-            updateClusters()
-        }
-        .onReceive(Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()) { _ in
-            checkForRegionChange()
-        }
-    }
-    
-    private func checkForRegionChange() {
-        // Only update if region has changed significantly
-        if let lastRegion = lastRegion {
-            let latDiff = abs(lastRegion.center.latitude - region.center.latitude)
-            let lonDiff = abs(lastRegion.center.longitude - region.center.longitude)
-            let spanLatDiff = abs(lastRegion.span.latitudeDelta - region.span.latitudeDelta)
-            let spanLonDiff = abs(lastRegion.span.longitudeDelta - region.span.longitudeDelta)
-            
-            if latDiff > 0.01 || lonDiff > 0.01 || spanLatDiff > 0.01 || spanLonDiff > 0.01 {
-                updateClusters()
-                self.lastRegion = region
+            if !hasInitialized {
+                // Set initial region once on first appear
+                let initialRegion = MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: 44.0, longitude: -72.7),
+                    span: MKCoordinateSpan(latitudeDelta: 6.0, longitudeDelta: 6.0)
+                )
+                region = initialRegion
+                clusterManager.updateClusters(resorts: resorts, mapRegion: initialRegion)
+                hasInitialized = true
             }
-        } else {
-            updateClusters()
-            self.lastRegion = region
+        }
+        .onMapCameraChange { context in
+            // Only update if camera actually changed to avoid loops
+            if context.region.center.latitude != region.center.latitude ||
+               context.region.center.longitude != region.center.longitude ||
+               context.region.span.latitudeDelta != region.span.latitudeDelta {
+                region = context.region
+                clusterManager.updateClusters(resorts: resorts, mapRegion: context.region)
+            }
         }
     }
     
-    private func updateClusters() {
-        clusterManager.updateClusters(resorts: resorts, mapRegion: region)
-    }
-    
-    private func zoomToCluster(_ cluster: ResortCluster) {
-        let lats = cluster.resorts.map { $0.latitude }
-        let lons = cluster.resorts.map { $0.longitude }
-        
-        let minLat = lats.min() ?? cluster.coordinate.latitude
-        let maxLat = lats.max() ?? cluster.coordinate.latitude
-        let minLon = lons.min() ?? cluster.coordinate.longitude
-        let maxLon = lons.max() ?? cluster.coordinate.longitude
-        
-        let center = CLLocationCoordinate2D(
-            latitude: (minLat + maxLat) / 2,
-            longitude: (minLon + maxLon) / 2
-        )
-        
-        let span = MKCoordinateSpan(
-            latitudeDelta: (maxLat - minLat) * 1.5,
-            longitudeDelta: (maxLon - minLon) * 1.5
-        )
-        
-        withAnimation {
-            region = MKCoordinateRegion(center: center, span: span)
+    @ViewBuilder
+    private func annotationView(for annotation: MapAnnotationItem) -> some View {
+        Button(action: { handleAnnotationTap(annotation) }) {
+            switch annotation {
+            case .regionalCluster(let cluster):
+                RegionalClusterView(cluster: cluster)
+            case .stateCluster(let cluster):
+                StateClusterView(cluster: cluster)
+            case .proximityCluster(let cluster):
+                ProximityClusterView(cluster: cluster)
+            case .resort(let resort):
+                ResortAnnotationView(
+                    resort: resort,
+                    showLabel: clusterManager.shouldShowLabels(for: region.span)
+                )
+            }
         }
-    }
-}
-
-// Enhanced ResortMapMarker with conditional label display
-struct ResortMapMarker: View {
-    let resort: Resort
-    var showLabel: Bool = false
-    
-    // Region-based colors
-    var regionColor: Color {
-        switch resort.region {
-        case "West", "Pacific":
-            return Color(red: 0.2, green: 0.5, blue: 0.8)  // Ocean blue
-        case "Central", "Midwest":
-            return Color(red: 0.2, green: 0.6, blue: 0.3)  // Forest green
-        case "Rocky Mountains", "Rockies":
-            return Color(red: 0.5, green: 0.3, blue: 0.7)  // Mountain purple
-        case "Northeast", "East":
-            return Color(red: 0.9, green: 0.5, blue: 0.2)  // Autumn orange
-        default:
-            return Color.blue
-        }
+        .buttonStyle(PlainButtonStyle())
     }
     
-    var body: some View {
-        VStack(spacing: 2) {
-            ZStack {
-                Circle()
-                    .fill(regionColor.opacity(0.3))
-                    .frame(width: 36, height: 36)
-                    .blur(radius: 2)
-                
-                Circle()
-                    .fill(regionColor)
-                    .frame(width: 30, height: 30)
-                
-                Image(systemName: "figure.skiing.downhill")
-                    .foregroundColor(.white)
-                    .font(.system(size: 16, weight: .medium))
+    private func handleAnnotationTap(_ annotation: MapAnnotationItem) {
+        switch annotation {
+        case .regionalCluster, .stateCluster, .proximityCluster:
+            // Zoom into cluster
+            if let newRegion = clusterManager.getRegionForZoom(annotation: annotation) {
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    mapCameraPosition = .region(newRegion)
+                    region = newRegion
+                }
             }
             
-            if showLabel {
-                Text(resort.name)
-                    .font(.caption2)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 2)
-                    .background(Color.white.opacity(0.9))
-                    .cornerRadius(4)
-                    .shadow(radius: 2)
-                    .lineLimit(1)
-                    .fixedSize()
-            }
+        case .resort(let resort):
+            // Show resort detail
+            selectedResort = resort
         }
     }
 }

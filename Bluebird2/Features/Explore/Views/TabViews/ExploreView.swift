@@ -4,6 +4,7 @@ import MapKit
 
 struct ExploreView: View {
     @StateObject private var viewModel = ExploreViewModel()
+    @EnvironmentObject var coordinator: AppCoordinator
     @State private var showingResortDetail = false
     @State private var shouldNavigateToPlan = false
     @State private var resortForPlanning: Resort?
